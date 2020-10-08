@@ -1,0 +1,52 @@
+#include "Talkie.h"
+#include "Vocab_US_Large.h"
+#include "Vocab_US_Acorn.h"
+#include "Vocab_Special.h"
+
+// Define pins for ultrasonic- and ledpins
+int const trigPin = 11;
+int const echoPin = 12;
+int const ledpin = 2;
+
+void setup(){
+Serial.begin(9600);
+pinMode(trigPin, OUTPUT); // trig pin will have pulses output
+pinMode(echoPin, INPUT); // echo pin should be input to get pulse width
+pinMode(ledpin, OUTPUT); // led pin is output to control buzzering
+}
+
+Talkie voice;
+
+void loop(){
+  int duration, distance;
+  setup();
+  digitalWrite(trigPin, LOW); //reset trigPin
+  // Output pulse with 10 microsec width on trigPin
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  // Measure the pulse input in echo pin
+  duration = pulseIn(echoPin, HIGH); // duration lenghtened
+  // Distance is half the duration devided by 29.1 (from datasheet)
+  distance = (duration/2) / 29.1;
+  if (distance <= 130) {
+    digitalWrite(ledpin, HIGH);
+    SpeakLoud();
+    } 
+  else {
+   digitalWrite(ledpin, LOW);
+    }
+  // Waiting 500 ms 
+ delay(500);
+}
+  
+void SpeakLoud(){
+   voice.say(spPAUSE2);
+   voice.say(sp4_WARNING);
+   voice.say(sp4_WARNING);
+   voice.say(spa_NOT);
+   voice.say(spPAUSE2);
+   voice.say(sp3_ONE);
+   voice.say(sp2_METER);
+   voice.say(sp3_FIFTY);
+ }
